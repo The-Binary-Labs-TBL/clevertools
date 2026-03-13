@@ -1,0 +1,7 @@
+PyYAML
+tomli-w
+twine
+faker
+python-dotenv
+logging
+pymongo
