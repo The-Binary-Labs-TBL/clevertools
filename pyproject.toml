@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clevertools"
+version = "0.1.0"
+description = "Clevertools is a utility library providing practical tools for common workflows."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE", "CONTRIBUTORS"]
+authors = [{ name = "b7binw13" }]
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = "requirements.txt" }
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.urls]
+Homepage = "https://github.com/The-Binary-Labs-TBL/clevertools"
+Repository = "https://github.com/The-Binary-Labs-TBL/clevertools.git"
+Issues = "https://github.com/The-Binary-Labs-TBL/clevertools/issues"
