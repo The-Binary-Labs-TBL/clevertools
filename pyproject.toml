@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clevertools"
-version = "0.1.0"
+version = "0.1.1"
 description = "Clevertools is a utility library providing practical tools for common workflows."
 readme = "README.md"
 requires-python = ">=3.10"
