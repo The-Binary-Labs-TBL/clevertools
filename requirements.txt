@@ -1,7 +1,2 @@
-PyYAML
-tomli-w
+pytest
 twine
-faker
-python-dotenv
-logging
-pymongo
