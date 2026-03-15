@@ -5,3 +5,4 @@ faker
 python-dotenv
 logging
 pymongo
+pytest

@@ -1,35 +1,36 @@
 # clevertools
 
-`clevertools` is a Python utility library for everyday filesystem and runtime tasks.
+`clevertools` is a utility library providing practical tools for common
+workflows.
 
-It provides:
-- file and directory creation
-- IO helpers
-- cleanup helpers
-- structured logging with console and file handlers
-- runtime helpers and file bootstrapping
-- a typed exception/validation model
+## Public Tools
 
-## Start Working with it
+- plain-text file helpers
+- masking for sensitive values
+- global runtime configuration
+- simple console and file logger setup
 
-1. Clone the repository (ssh recommended):
-```bash
-git clone git@github.com:The-Binary-Labs-TBL/clevertools.git
-cd clevertools
+## Example
+
+```python
+from clevertools import mask, read
+
+secret = mask("sk-example-secret-token", 3, 4)
+content = read("example.txt")
 ```
 
-2. Install all dependecies:
+## Project Goal
 
-Linux:
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-```
+`clevertools` is intentionally compact. It focuses on practical helpers for
+everyday workflows without introducing a large framework or unnecessary
+abstraction.
 
-Project metadata is defined in `pyproject.toml`.
+## Documentation
 
-## Python version
+- Start here: [docs/README.md](./docs/README.md)
+- Getting started: [docs/getting-started/README.md](./docs/getting-started/README.md)
+- Reference: [docs/reference/README.md](./docs/reference/README.md)
 
-- Required: `>=3.10`
+## Requirements
+
+- Python `>=3.10`
