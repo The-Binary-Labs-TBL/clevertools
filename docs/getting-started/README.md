@@ -1,14 +1,6 @@
 # Getting Started
 
-This section helps you install `clevertools`, verify the package import, and
-build a first small example.
-
-## Pages
+Use this section to install `clevertools` and try a first example.
 
 - [Installation](./installation.md)
 - [First Steps](./first-steps.md)
-
-## Recommended Order
-
-1. Start with [Installation](./installation.md)
-2. Continue with [First Steps](./first-steps.md)

@@ -1,3 +1,7 @@
+# === Builds and Testing === #
 pytest
-twine
-build
+ruff
+mypy
+
+# === For tools to work === #
+toml

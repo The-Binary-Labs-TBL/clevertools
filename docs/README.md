@@ -1,30 +1,15 @@
 # Documentation
 
-This folder contains the documentation for `clevertools`, a utility library
-providing practical tools for common workflows.
-
-## Direction
-
-The documentation is split into two main parts:
-
-- [Getting Started](./getting-started/README.md) for installation, setup, and
-  the first steps with the library
-- [Reference](./reference/README.md) for detailed documentation of tools,
-  concepts, and important behavior
-
-## Documentation Structure
-
-This layout keeps the project easy to navigate:
-
-- `README.md` in the project root introduces the package
-- `docs/README.md` explains how the documentation is organized
-- `docs/getting-started/` contains onboarding and first-use pages
-- `docs/reference/` contains structured reference documentation
-- `docs/reference/tools/` documents one public tool per file
-- `docs/reference/concepts/` explains shared behavior such as error handling
-  and logging
+This folder contains the documentation for `clevertools`.
 
 ## Start Here
 
-- [Getting Started](./getting-started/README.md)
-- [Reference](./reference/README.md)
+- [Getting started](./getting-started/README.md) for installation and a first
+  example
+- [Reference](./reference/README.md) for tools and shared behavior
+
+## Layout
+
+- `docs/getting-started/` covers setup and first use
+- `docs/reference/tools/` documents each public helper
+- `docs/reference/concepts/` explains behavior shared across helpers

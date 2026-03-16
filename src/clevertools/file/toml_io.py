@@ -2,29 +2,28 @@ from __future__ import annotations
 
 from typing import Any, Optional
 from pathlib import Path
+import toml
 
 from ..errors.policy import handle_error
 from ..configuration import ErrorMode
 
-
-def read(file_path: Path | str, on_error: Optional[ErrorMode] = None) -> str | None:
+def read_toml(file_path: Path | str, on_error: Optional[ErrorMode] = None) -> Any | None:
     """
-    Read a file as plain UTF-8 text without applying any format-specific
-    parsing.
+    Read TOML data from a UTF-8 encoded file.
 
-    This helper is intended for simple text-based files such as `.txt`, `.env`,
-    or templates where the raw file content should be returned exactly as
-    stored.
+    The file content is parsed with the `toml` library and returned as the
+    corresponding Python value, typically a dictionary with nested structures
+    such as lists, strings, numbers, and booleans.
 
     Args:
-        file_path: Path to the file that should be read.
+        file_path: Path to the TOML file that should be read.
         on_error: Error handling mode. Use `"raise"` to re-raise the exception,
             `"log"` to log the error and return `None`, or `"silent"` to return
             `None` without logging.
 
     Returns:
-        The file content as a string, or `None` when the file cannot be read
-        and the
+        The parsed TOML value, or `None` when the file cannot be read or the
+        content cannot be parsed and the
         selected error mode does not raise.
     """
 
@@ -34,38 +33,40 @@ def read(file_path: Path | str, on_error: Optional[ErrorMode] = None) -> str | N
         return handle_error(Exception(f"File not found: {path}") ,on_error=on_error, fallback=None)
 
     try:
-        return path.read_text(encoding="utf-8")
+        return toml.load(path)
     except Exception as exc:
         return handle_error(exc, on_error=on_error, fallback=None)
 
-
-def write(
+def read_write(
     file_path: Path | str,
     data: Any,
     create_if_missing: Optional[bool] = True,
     on_error: ErrorMode | None = None
 ) -> None:
     """
-    Write plain UTF-8 text to a file without using a format-specific
-    serializer.
+    Serialize a Python value to TOML and write it as UTF-8 text.
 
-    This helper is intended for plain files such as `.txt`, `.env`, or small
-    generated assets where the content should be written exactly as provided.
-    Depending on `create_if_missing`, the target file can either be created
-    automatically or must already exist.
+    The given value should be compatible with TOML serialization, typically a
+    dictionary containing supported TOML value types. This helper currently
+    treats `None` as invalid input. Depending on `create_if_missing`, the
+    target file can either be created automatically or must already exist.
 
     Args:
-        file_path: Path to the target file.
-        data: Text content to write to the file.
+        file_path: Path to the target TOML file.
+        data: Python value to serialize and write as TOML.
         create_if_missing: Whether to create the target file if it does not
             already exist. If set to `False`, writing fails when the file is
             missing.
         on_error: Error handling mode. Use `"raise"` to re-raise the exception,
             `"log"` to log the error, or `"silent"` to suppress the exception.
+
+    Returns:
+        `None`. If an error occurs and the selected error mode does not raise,
+        the function handles it according to `on_error`.
     """
 
     path = Path(file_path)
-    
+
     if not create_if_missing and not path.exists():
         return handle_error(Exception(f"File not found: {path}"), on_error=on_error, fallback=None)
 
@@ -73,6 +74,6 @@ def write(
         return handle_error(Exception(f"Data is not valid!") ,on_error=on_error, fallback=None)
 
     try:
-        path.write_text(data, encoding="utf-8")
+        path.write_text(toml.dumps(data), encoding="utf-8")
     except Exception as exc:
         handle_error(exc, on_error=on_error, fallback=None)

@@ -2,18 +2,13 @@
 
 `configure()` sets global defaults for `clevertools`.
 
-## Purpose
-
-Use this helper to define shared package behavior once instead of repeating the
-same options on every call.
-
 ## Signature
 
 ```python
 configure(*, error_mode=None, logger_overrides=None)
 ```
 
-## Options
+## Parameters
 
 - `error_mode`: one of `"raise"`, `"log"`, or `"silent"`
 - `logger_overrides`: default keyword arguments used by `configure_logger()`

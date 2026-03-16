@@ -1,9 +1,8 @@
 # clevertools
 
-`clevertools` is a utility library providing practical tools for common
-workflows.
+`clevertools` is a small utility library for common everyday tasks.
 
-## Public Tools
+## Included Tools
 
 - plain-text file helpers
 - masking for sensitive values
@@ -19,17 +18,16 @@ secret = mask("sk-example-secret-token", 3, 4)
 content = read("example.txt")
 ```
 
-## Project Goal
+## Why It Exists
 
-`clevertools` is intentionally compact. It focuses on practical helpers for
-everyday workflows without introducing a large framework or unnecessary
-abstraction.
+`clevertools` stays intentionally small. It gives you practical helpers without
+turning simple workflows into a framework.
 
 ## Documentation
 
-- Start here: [docs/README.md](./docs/README.md)
-- Getting started: [docs/getting-started/README.md](./docs/getting-started/README.md)
-- Reference: [docs/reference/README.md](./docs/reference/README.md)
+- [Documentation home](./docs/README.md)
+- [Getting started](./docs/getting-started/README.md)
+- [Reference](./docs/reference/README.md)
 
 ## Requirements
 
