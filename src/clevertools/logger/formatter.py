@@ -7,13 +7,7 @@ import sys
 from ..models import DEFAULT_COLORS, DEFAULT_DATE_FORMAT, DEFAULT_TIME_FORMAT, RESET
 
 class CleverToolsFormatter(logging.Formatter):
-    def __init__(
-        self,
-        fmt: str,
-        datefmt: str | None = None,
-        *,
-        use_colors: bool = False,
-    ) -> None:
+    def __init__(self, fmt: str, datefmt: str | None = None, *, use_colors: bool = False) -> None:
         super().__init__(fmt=fmt, datefmt=datefmt)
         self.use_colors = use_colors
 

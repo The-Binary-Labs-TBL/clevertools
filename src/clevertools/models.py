@@ -10,8 +10,8 @@ WriteMode = Literal["runtime", "buffered"]
 LoggerFormatPreset = Literal["default", "datetime"]
 
 DEFAULT_LOGGER_NAME = "clevertools"
-DEFAULT_FORMAT_EXTENTED = "%(name)s | %(levelname)s | [%(date)s] [%(time)s] %(message)s"
-DEFAULT_FORMAT = "%(name)s | [%(levelname)s] %(message)s"
+DEFAULT_FORMAT_EXTENTED = "%(name)s | %(levelname)s | [%(date)s] [%(time)s] = %(message)s"
+DEFAULT_FORMAT = "%(name)s | [%(levelname)s] = %(message)s"
 DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 DEFAULT_TIME_FORMAT = "%H:%M:%S"
 RESET = "\033[0m"
