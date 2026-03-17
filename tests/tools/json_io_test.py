@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from clevertools.file.json_io import read_json, write_json
 
 from ..paths import PATHS
@@ -34,3 +36,24 @@ class TestJsonIO:
         debug(f"Rueckgabewert fuer defektes JSON: {loaded!r}")
 
         assert loaded is None
+
+    def test_read_json_rejects_directory_path(self) -> None:
+        path = PATHS.CACHE_FOLDER
+
+        with pytest.raises(IsADirectoryError, match="Path is not a file"):
+            read_json(path, on_error="raise")
+
+    def test_write_json_does_not_create_missing_file_when_disabled(self) -> None:
+        path = PATHS.CACHE_FOLDER / "missing" / "blocked.json"
+        if path.exists():
+            path.unlink()
+
+        write_json(path, {"blocked": True}, create_if_missing=False, on_error="silent")
+
+        assert not path.exists()
+
+    def test_write_json_rejects_none_payload(self) -> None:
+        path = PATHS.CACHE_FOLDER / "none.json"
+
+        with pytest.raises(ValueError, match="JSON data must not be None"):
+            write_json(path, None, on_error="raise")

@@ -2,6 +2,7 @@
 pytest
 ruff
 mypy
+faker
 
 # === For tools to work === #
-toml
+tomli_w

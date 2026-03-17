@@ -12,7 +12,7 @@ from .logger.options import resolve_logger_options
 
 from .file.default_io import read, write
 from .file.json_io import read_json, write_json
-from .file.toml_io import read_toml, read_write
+from .file.toml_io import read_toml, write_toml
 
 from .system.mask_handler import mask
 
@@ -29,7 +29,7 @@ __all__ = (
     "read_json",
     "write_json",
     "read_toml",
-    "read_write",
+    "write_toml",
     "configure_logger",
     "get_logger",
     "CleverToolsFormatter",

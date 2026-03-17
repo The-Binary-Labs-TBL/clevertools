@@ -10,33 +10,30 @@ from ..configuration import ErrorMode
 
 def read_json(file_path: Path | str, on_error: Optional[ErrorMode] = None) -> Any | None:
     """
-    Read JSON data from a UTF-8 encoded file.
-
-    The file content is parsed with Python's built-in `json` module and
-    returned as the matching Python value, for example a `dict`, `list`,
-    `str`, `int`, `float`, `bool`, or `None`.
+    Read and deserialize a JSON file.
 
     Args:
-        file_path: Path to the JSON file that should be read.
-        on_error: Error handling mode. Use `"raise"` to re-raise the exception,
-            `"log"` to log the error and return `None`, or `"silent"` to return
-            `None` without logging.
+        file_path: Path to the JSON file that should be loaded.
+        on_error: Error handling mode. If omitted, the global default from
+            `configure()` is used.
 
     Returns:
-        The parsed JSON value, or `None` when the file cannot be read or the
-        content cannot be parsed and the
-        selected error mode does not raise.
+        The parsed JSON value. Returns `None` when the file cannot be read or
+        parsed and the selected error mode does not raise.
     """
 
     path = Path(file_path)
-    
+
     if not path.exists():
-        return handle_error(Exception(f"File not found: {path}") ,on_error=on_error, fallback=None)
+        return handle_error(FileNotFoundError(f"JSON file not found: {path}"), on_error=on_error, fallback=None)
+
+    if not path.is_file():
+        return handle_error(IsADirectoryError(f"Path is not a file: {path}"), on_error=on_error, fallback=None)
 
     try:
-        with open(path, "r", encoding="utf-8") as file:
+        with path.open("r", encoding="utf-8") as file:
             return json.load(file)
-    except Exception as exc:
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         return handle_error(exc, on_error=on_error, fallback=None)
 
 
@@ -44,40 +41,44 @@ def write_json(
     file_path: Path | str,
     data: Any,
     create_if_missing: Optional[bool] = True,
-    on_error: ErrorMode | None = None
+    ensure_ascii: bool = True,
+    indent: int = 4,
+    on_error: ErrorMode | None = None,
 ) -> None:
     """
-    Serialize a Python value to JSON and write it as UTF-8 text.
-
-    The given value must be JSON-serializable. Objects such as dictionaries,
-    lists, strings, numbers, and booleans are supported directly. This helper
-    currently treats `None` as invalid input. Depending on `create_if_missing`,
-    the target file can either be created automatically or must already exist.
+    Serialize data as JSON and write it to a file.
 
     Args:
-        file_path: Path to the target JSON file.
-        data: Python value to serialize and write as JSON.
-        create_if_missing: Whether to create the target file if it does not
-            already exist. If set to `False`, writing fails when the file is
-            missing.
-        on_error: Error handling mode. Use `"raise"` to re-raise the exception,
-            `"log"` to log the error, or `"silent"` to suppress the exception.
+        file_path: Target file path.
+        data: JSON-serializable value to write.
+        create_if_missing: When `True`, missing parent directories are created
+            automatically. When `False`, the target file must already exist.
+        ensure_ascii: Forwarded to `json.dump()` to control whether non-ASCII
+            characters are escaped.
+        indent: Indentation level used for the formatted JSON output.
+        on_error: Error handling mode. If omitted, the global default from
+            `configure()` is used.
 
     Returns:
-        `None`. If an error occurs and the selected error mode does not raise,
-        the function handles it according to `on_error`.
+        `None`. If serialization or writing fails, the outcome depends on the
+        selected error mode.
     """
 
     path = Path(file_path)
 
-    if not create_if_missing and not path.exists():
-        return handle_error(Exception(f"File not found: {path}"), on_error=on_error, fallback=None)
-
     if data is None:
-        return handle_error(Exception(f"Data is not valid!") ,on_error=on_error, fallback=None)
+        return handle_error(ValueError("JSON data must not be None."), on_error=on_error, fallback=None)
 
     try:
-        with open(path, "w", encoding="utf-8") as file:
-            json.dump(data, file)
-    except Exception as exc:
+        if create_if_missing:
+            path.parent.mkdir(parents=True, exist_ok=True)
+        else:
+            if not path.exists():
+                return handle_error(FileNotFoundError(f"JSON file not found: {path}"), on_error=on_error, fallback=None)
+            if not path.is_file():
+                return handle_error(IsADirectoryError(f"Path is not a file: {path}"), on_error=on_error, fallback=None)
+
+        with path.open("w", encoding="utf-8") as file:
+            json.dump(data, file, ensure_ascii=ensure_ascii, indent=indent)
+    except (OSError, TypeError, ValueError) as exc:
         handle_error(exc, on_error=on_error, fallback=None)
