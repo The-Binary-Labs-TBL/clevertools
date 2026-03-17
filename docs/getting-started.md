@@ -1,6 +1,6 @@
 # Getting Started
 
-## Requirements
+The old getting-started section has been simplified.
 
-- Python `>=3.10`
-- dependencies from `requirements.txt`
+- [Installation](./installation.md)
+- [Quickstart](./quickstart.md)

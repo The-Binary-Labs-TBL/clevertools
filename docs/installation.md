@@ -1,13 +1,10 @@
 # Installation
 
-Install `clevertools` in a local virtual environment.
+`clevertools` requires Python `>=3.10`.
 
-## Requirements
+## Local setup
 
-- Python `>=3.10`
-- dependencies from `requirements.txt`
-
-## Linux
+### Linux
 
 ```bash
 python -m venv .venv
@@ -17,7 +14,7 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-## macOS
+### macOS
 
 ```bash
 python3 -m venv .venv
@@ -27,7 +24,7 @@ python3 -m pip install -r requirements.txt
 python3 -m pip install -e .
 ```
 
-## Windows PowerShell
+### Windows PowerShell
 
 ```powershell
 py -m venv .venv
@@ -37,7 +34,7 @@ py -m pip install -r requirements.txt
 py -m pip install -e .
 ```
 
-## Windows Command Prompt
+### Windows Command Prompt
 
 ```bat
 py -m venv .venv
