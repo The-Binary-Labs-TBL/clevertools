@@ -20,7 +20,7 @@ mask(
 - returns `""` when `value` is `None`
 - keeps 8 characters at the start and 2 at the end by default
 - allows custom visible prefix and suffix lengths
-- validates invalid arguments with `ValueError`
+- raises `ValueError` for invalid arguments
 
 ## Example
 

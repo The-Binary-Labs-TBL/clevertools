@@ -1,11 +1,19 @@
 from __future__ import annotations
 
 from collections.abc import Generator
+from pathlib import Path
+import sys
 import pytest
 import shutil
 
 from .bootstrap import bootstrap
 from .paths import PATHS
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -1,60 +1,75 @@
 from __future__ import annotations
 
+from typing import Optional
 
-def mask(value: str | None, show_start_characters: int | None = None, show_end_characters: int | None = None, *, mask_character: str = "*") -> str:
+from ..errors.policy import handle_error
+from ..configuration import ErrorMode
+
+def mask(
+    value: str,
+    show_start_characters: Optional[int] = None,
+    show_end_characters: Optional[int] = None,
+    mask_character: str = "*",
+    on_error: Optional[ErrorMode] = None
+) -> str:
     """
-    Mask a string while keeping part of the beginning or end visible.
+    Mask the middle portion of a string while keeping selected characters at
+    the beginning and end visible.
 
-    This is useful for values such as API keys, tokens, or passwords that
-    should not be shown in full. By default, the function reveals a small
-    prefix and suffix, but both visible sections can be adjusted.
+    This helper is useful for obfuscating sensitive values such as API keys,
+    tokens, IDs, or personal data before logging or displaying them.
 
     Args:
-        value: The value to mask. Returns an empty string when `None`.
-        show_start_characters: Number of visible characters at the start.
-        show_end_characters: Number of visible characters at the end.
-        mask_character: Single character used for the masked middle section.
+        value: Input string that should be partially masked.
+        show_start_characters: Number of characters to keep visible at the
+            beginning of the string. If not provided, `8` characters are shown
+            by default.
+        show_end_characters: Number of characters to keep visible at the end
+            of the string. If not provided, `2` characters are shown by
+            default.
+        mask_character: Single character used to replace the masked portion of
+            the string.
+        on_error: Error handling mode. Use `"raise"` to re-raise the exception,
+            `"log"` to log the error and return an empty string, or `"silent"`
+            to return an empty string without logging.
 
     Returns:
-        The masked string.
-
-    Raises:
-        ValueError: If `value` is not a string, if visible counts are negative,
-            or if `mask_character` is not exactly one character long.
+        The masked string, or an empty string when validation fails and the
+        selected error mode does not raise.
     """
 
-    if value is None:
-        return ""
-
     if not isinstance(value, str):
-        raise ValueError("value must be a string or None")
+        return handle_error(ValueError("value must be a string"), on_error=on_error, fallback="")
 
     default_start = 8
     default_end = 2
 
     if show_start_characters is not None:
         if show_start_characters < 0:
-            raise ValueError("show_start_characters must be >= 0")
+            return handle_error(ValueError("show_start_characters must be >= 0"), on_error=on_error, fallback="")
         default_start = show_start_characters
 
     if show_end_characters is not None:
         if show_end_characters < 0:
-            raise ValueError("show_end_characters must be >= 0")
+            return handle_error(ValueError("show_end_characters must be >= 0"), on_error=on_error, fallback="")
         default_end = show_end_characters
 
     if len(mask_character) != 1:
-        raise ValueError("mask_character must be exactly one character")
+        return handle_error(ValueError("mask_character must be exactly one character"), on_error=on_error, fallback="")
 
     if not value:
-        return ""
+        return handle_error(ValueError("to use mask you need to set the value"), on_error=on_error, fallback="")
 
-    visible_end_count = min(default_end, max(len(value) - 1, 0))
-    remaining_for_start = len(value) - visible_end_count
-    visible_start_count = min(default_start, max(remaining_for_start - 1, 0))
+    try:
+        vis_end: int = min(default_end, max(len(value) - 1, 0))
+        vis_start: int = min(default_start, max(len(value) - vis_end - 1, 0))
 
-    visible_start = value[:visible_start_count]
-    visible_end = value[-visible_end_count:] if visible_end_count else ""
-    masked_middle_length = len(value) - visible_start_count - visible_end_count
-    masked_middle = mask_character * masked_middle_length
+        length: int = len(value) - vis_start - vis_end
+        
+        visible_start: str = value[: vis_start]
+        masked_middle: str = mask_character * length
+        visible_end: str = value[-vis_end:] if vis_end > 0 else ""
 
-    return f"{visible_start}{masked_middle}{visible_end}"
+        return f"{visible_start}{masked_middle}{visible_end}"
+    except Exception as exc:
+        return handle_error(exc, on_error=on_error, fallback="")

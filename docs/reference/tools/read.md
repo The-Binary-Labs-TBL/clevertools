@@ -12,7 +12,7 @@ read(file_path, on_error=None)
 
 - accepts `str` and `Path`
 - returns file content as `str`
-- returns `None` when reading fails and the chosen error mode does not raise
+- returns `None` when reading fails and the active error mode does not raise
 
 ## Example
 

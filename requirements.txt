@@ -1,3 +1,8 @@
+# === Builds and Testing === #
 pytest
-twine
-build
+ruff
+mypy
+faker
+
+# === For tools to work === #
+tomli_w

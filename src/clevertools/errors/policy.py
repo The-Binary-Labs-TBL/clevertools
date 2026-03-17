@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import logging
 from typing import TypeVar
+import logging
 
 from ..configuration import ErrorMode, get_config
 

@@ -1,8 +1,6 @@
 # Tool Reference
 
-The public helpers are documented one tool per page.
-
-## Available Tools
+Each public helper has its own page.
 
 - [configure](./configure.md)
 - [configure_logger](./configure_logger.md)

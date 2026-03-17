@@ -1,7 +1,6 @@
 # Installation
 
-This page shows how to install `clevertools` locally on Linux, macOS, and
-Windows.
+Install `clevertools` in a local virtual environment.
 
 ## Requirements
 

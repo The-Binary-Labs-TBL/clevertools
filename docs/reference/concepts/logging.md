@@ -4,6 +4,7 @@
 
 ## Main Helpers
 
+- `log` is the shared global logger instance
 - `configure_logger()` creates and configures a logger
 - `get_logger()` returns a logger by name
 - `configure()` can define default logger options
@@ -13,20 +14,22 @@
 - console logging
 - file logging
 - configurable formatting
+- two built-in default format presets
 - optional colored output in terminals
 
 ## Example
 
 ```python
-from clevertools import configure, configure_logger
+from clevertools import configure, configure_logger, log
 
 configure(
     logger_overrides={
         "level": "INFO",
         "console_enabled": True,
+        "format_preset": "datetime",
     }
 )
 
-logger = configure_logger(name="app")
-logger.info("ready")
+configure_logger()
+log.info("ready")
 ```

@@ -4,7 +4,7 @@ from dataclasses import replace
 from threading import RLock
 from typing import Any
 
-from .static import CleverToolsConfig, ErrorMode
+from .models import CleverToolsConfig, ErrorMode
 
 _LOCK = RLock()
 _CONFIG = CleverToolsConfig()

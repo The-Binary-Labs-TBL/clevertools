@@ -10,6 +10,7 @@ configure_logger(
     *,
     name="clevertools",
     level=None,
+    format_preset=None,
     fmt=None,
     date_format=None,
     console_enabled=None,
@@ -20,11 +21,12 @@ configure_logger(
 )
 ```
 
-## Typical Use Cases
+## Common Uses
 
 - configure a console logger for scripts
 - write logs to a file
 - apply defaults from `configure()`
+- choose between the built-in default formats
 
 ## Example
 
@@ -34,7 +36,13 @@ from clevertools import configure_logger
 logger = configure_logger(
     name="worker",
     level="INFO",
+    format_preset="datetime",
     file_logging_enabled=True,
     file_log_path="logs/worker.log",
 )
 ```
+
+## Built-In Formats
+
+- `"default"`: `%(name)s | [%(levelname)s] %(message)s`
+- `"datetime"`: `%(name)s | %(levelname)s | [%(date)s] [%(time)s] %(message)s`

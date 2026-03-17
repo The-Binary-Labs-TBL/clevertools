@@ -1,6 +1,6 @@
 # Error Handling
 
-Several helpers in `clevertools` support a shared error handling strategy.
+Several helpers in `clevertools` use the same error handling model.
 
 ## Modes
 
@@ -8,7 +8,7 @@ Several helpers in `clevertools` support a shared error handling strategy.
 - `"log"` logs the error and returns a fallback value when supported
 - `"silent"` suppresses the error and returns a fallback value when supported
 
-## Where It Is Used
+## Used By
 
 - `read()`
 - `write()`

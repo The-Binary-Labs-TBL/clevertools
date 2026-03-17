@@ -8,11 +8,6 @@
 get_logger(name="clevertools")
 ```
 
-## Purpose
-
-Use this helper when you only want to fetch a logger by name without changing
-its handlers or configuration.
-
 ## Example
 
 ```python

@@ -12,7 +12,7 @@ write(file_path, data, on_error=None)
 
 - accepts `str` and `Path`
 - writes the provided text exactly as given
-- uses the shared error handling configuration when `on_error` is omitted
+- uses the shared error handling setting when `on_error` is omitted
 
 ## Example
 

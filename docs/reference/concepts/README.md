@@ -1,8 +1,6 @@
 # Concepts
 
-This section explains shared behavior used across multiple tools.
-
-## Pages
+These pages describe behavior shared across multiple helpers.
 
 - [Error Handling](./error-handling.md)
 - [Logging](./logging.md)

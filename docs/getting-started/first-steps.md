@@ -1,8 +1,8 @@
 # First Steps
 
-This page shows a small first workflow with `clevertools`.
+This example shows a small workflow with file helpers, masking, and logging.
 
-## First Import
+## Import
 
 ```python
 from clevertools import configure, configure_logger, mask, read, write
@@ -23,7 +23,7 @@ content = read("demo.txt")
 logger.info("Loaded content: %s", content)
 ```
 
-## Continue
+## Next
 
 - [Reference overview](../reference/README.md)
 - [Tool reference](../reference/tools/README.md)
