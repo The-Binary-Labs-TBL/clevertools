@@ -37,6 +37,8 @@ loaded = read_json("tmp/config.json")
 logger.info("Loaded config: %s", loaded)
 ```
 
+For split TOML setups, `load_config()` merges multiple files into one config object with dot access.
+
 ## Public API Overview
 
 ### Core
@@ -54,7 +56,6 @@ logger.info("Loaded config: %s", loaded)
 - `read_toml`
 - `write_toml`
 - `load_config`
-- `ConfigHandler`
 
 ### Logging helpers
 

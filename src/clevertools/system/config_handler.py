@@ -24,6 +24,8 @@ def _deep_merge(base: dict[str, Any], incoming: Mapping[str, Any]) -> dict[str, 
 
 
 class ConfigNode:
+    """Small wrapper that exposes nested configuration keys via attributes."""
+
     def __init__(self, data: Mapping[str, Any]) -> None:
         self._data = dict(data)
 
@@ -47,9 +49,11 @@ class ConfigNode:
         return f"{self.__class__.__name__}({self._data!r})"
 
     def as_dict(self) -> dict[str, Any]:
+        """Return the wrapped configuration as a plain nested dictionary."""
         return _to_plain_dict(self._data)
 
     def get(self, path: str, default: Any = None) -> Any:
+        """Read a value via dot-path notation and return `default` if it is missing."""
         current: Any = self
 
         for part in path.split("."):
@@ -92,8 +96,16 @@ def _to_plain_dict(data: Mapping[str, Any]) -> dict[str, Any]:
 
 
 class ConfigHandler(ConfigNode):
+    """Load and expose multiple TOML files as one merged configuration tree."""
+
     @classmethod
     def load(cls, *file_paths: Path | str) -> "ConfigHandler":
+        """
+        Read multiple TOML files and merge them into one config object.
+
+        Nested tables are merged recursively. When the same non-mapping key
+        exists in multiple files, the value from the later file wins.
+        """
         merged: dict[str, Any] = {}
 
         for file_path in file_paths:
@@ -106,4 +118,15 @@ class ConfigHandler(ConfigNode):
 
 
 def load_config(*file_paths: Path | str) -> ConfigHandler:
+    """
+    Load multiple TOML files and expose them as one merged config object.
+
+    Files are processed in the given order. Nested TOML tables are merged
+    recursively so related sections from separate files appear together in the
+    final result. If the same non-mapping key appears in multiple files, the
+    value from the later file replaces the earlier one.
+
+    The returned object supports attribute-style access for nested sections and
+    `get()` for dot-path lookup.
+    """
     return ConfigHandler.load(*file_paths)

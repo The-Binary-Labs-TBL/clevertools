@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from clevertools.system.config_handler import ConfigHandler, load_config
+from clevertools.system.config_handler import load_config
 
 from ..paths import PATHS
 from ._debug import debug
@@ -46,7 +46,6 @@ default_post_status = "draft"
         config = load_config(settings_path, content_path)
         debug(f"Zusammengefuehrte Config: {config.as_dict()}")
 
-        assert isinstance(config, ConfigHandler)
         assert config.program.debug is False
         assert config.pipelines.ai.enabled is True
         assert config.pipelines.ai.cleanup_temp is True

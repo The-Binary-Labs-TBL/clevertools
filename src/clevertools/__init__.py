@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from .configuration import configure
-from .system.config_handler import ConfigHandler, load_config
+from .system.config_handler import load_config
 
 from .errors.exceptions import *  # noqa: F403
 
@@ -39,7 +39,6 @@ __all__ = (
     "reset_handlers",
     "resolve_logger_options",
     "configure",
-    "ConfigHandler",
     "load_config",
     
     # === Exceptions === #
