@@ -53,6 +53,8 @@ logger.info("Loaded config: %s", loaded)
 - `write_json`
 - `read_toml`
 - `write_toml`
+- `load_config`
+- `ConfigHandler`
 
 ### Logging helpers
 

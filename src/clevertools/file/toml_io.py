@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Optional
 from pathlib import Path
-import tomli_w
 import tomllib
 
 from ..errors.policy import handle_error
@@ -72,6 +71,8 @@ def write_toml(
         return handle_error(TypeError(f"TOML data must be a mapping, got {type(data).__name__}."), on_error=on_error, fallback=None)
 
     try:
+        import tomli_w
+
         if create_if_missing:
             path.parent.mkdir(parents=True, exist_ok=True)
         else:
@@ -83,5 +84,5 @@ def write_toml(
         toml_text = tomli_w.dumps(dict(data))
         path.write_text(toml_text, encoding="utf-8")
 
-    except (OSError, TypeError, ValueError) as exc:
+    except (ImportError, OSError, TypeError, ValueError) as exc:
         handle_error(exc, on_error=on_error, fallback=None)
