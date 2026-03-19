@@ -1110,9 +1110,22 @@ class InternalProtocolError(ExecutionError):
 
 class ExternalProtocolMismatchError(ProtocolError):
     """Raised when external protocol versions or formats mismatch."""
-    
+
+class YamlIOError(Exception):
+    """Base exception for YAML IO operations."""
+
+
+class YamlReadError(YamlIOError):
+    """Raised when reading YAML fails."""
+
+
+class YamlWriteError(YamlIOError):
+    """Raised when writing YAML fails."""
 
 __all__ = (
+    "YamlIOError",
+    "YamlReadError",
+    "YamlWriteError",
     "AppError",
     "RecoverableError",
     "FatalError",

@@ -6,3 +6,4 @@ faker
 
 # === For tools to work === #
 tomli_w
+pyyaml

@@ -1,9 +1,14 @@
 from __future__ import annotations
 
-from typing import Any, Iterator, Mapping
+from typing import Any, Iterator, Mapping, Optional
 from pathlib import Path
 
+
+from ..errors.policy import handle_error
 from ..file.toml_io import read_toml
+from ..file.json_io import read_json
+from ..file.yaml_io import read_yaml
+from ..models import ErrorMode
 
 
 def _deep_merge(base: dict[str, Any], incoming: Mapping[str, Any]) -> dict[str, Any]:
@@ -24,7 +29,6 @@ def _deep_merge(base: dict[str, Any], incoming: Mapping[str, Any]) -> dict[str, 
 
 
 class ConfigNode:
-    """Small wrapper that exposes nested configuration keys via attributes."""
 
     def __init__(self, data: Mapping[str, Any]) -> None:
         self._data = dict(data)
@@ -49,11 +53,9 @@ class ConfigNode:
         return f"{self.__class__.__name__}({self._data!r})"
 
     def as_dict(self) -> dict[str, Any]:
-        """Return the wrapped configuration as a plain nested dictionary."""
         return _to_plain_dict(self._data)
 
     def get(self, path: str, default: Any = None) -> Any:
-        """Read a value via dot-path notation and return `default` if it is missing."""
         current: Any = self
 
         for part in path.split("."):
@@ -96,37 +98,59 @@ def _to_plain_dict(data: Mapping[str, Any]) -> dict[str, Any]:
 
 
 class ConfigHandler(ConfigNode):
-    """Load and expose multiple TOML files as one merged configuration tree."""
-
     @classmethod
-    def load(cls, *file_paths: Path | str) -> "ConfigHandler":
-        """
-        Read multiple TOML files and merge them into one config object.
-
-        Nested tables are merged recursively. When the same non-mapping key
-        exists in multiple files, the value from the later file wins.
-        """
+    def load(cls, *paths: Path | str, on_error: Optional[ErrorMode] = None) -> ConfigHandler:
         merged: dict[str, Any] = {}
+        loaded: Mapping[str, Any] | None = None
 
-        for file_path in file_paths:
-            loaded = read_toml(file_path, on_error="raise")
+        for path in paths:
+            suffix = Path(path).suffix.lower()
+
+            if suffix == ".toml":
+                loaded = read_toml(path, on_error=on_error)
+            elif suffix == ".json":
+                loaded = read_json(path, on_error=on_error)
+            elif suffix in {".yaml", ".yml"}:
+                loaded = read_yaml(path, on_error=on_error)
+            else:
+                loaded = handle_error(
+                    ValueError("Invalid config handler type! Only .toml, .json and .yaml(.yml) file types are allowed"),
+                    on_error=on_error,
+                    fallback=None,
+                )
+
             if loaded is None:
                 continue
+
+            if not isinstance(loaded, Mapping):
+                loaded = handle_error(
+                    TypeError(f"Config root must be a mapping, got {type(loaded).__name__}."),
+                    on_error=on_error,
+                    fallback=None,
+                )
+                if loaded is None:
+                    continue
+
             merged = _deep_merge(merged, loaded)
 
         return cls(merged)
 
 
-def load_config(*file_paths: Path | str) -> ConfigHandler:
+def load_config(*file_paths: Path | str, on_error: Optional[ErrorMode] = None) -> ConfigHandler:
     """
-    Load multiple TOML files and expose them as one merged config object.
+    Load and merge one or more configuration files into a `ConfigHandler`.
 
-    Files are processed in the given order. Nested TOML tables are merged
-    recursively so related sections from separate files appear together in the
-    final result. If the same non-mapping key appears in multiple files, the
-    value from the later file replaces the earlier one.
+    Supported file types are TOML, JSON, YAML, and YML. Files are processed in
+    the order they are provided, and later files override earlier values while
+    nested mappings are merged recursively.
 
-    The returned object supports attribute-style access for nested sections and
-    `get()` for dot-path lookup.
+    Args:
+        file_paths: One or more paths to configuration files.
+        on_error: Error handling mode. If omitted, the configured default is
+            used.
+
+    Returns:
+        A `ConfigHandler` that provides attribute and key-based access to the
+        merged configuration data.
     """
-    return ConfigHandler.load(*file_paths)
+    return ConfigHandler.load(*file_paths, on_error=on_error)

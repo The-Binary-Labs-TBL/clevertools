@@ -26,12 +26,12 @@ loaded = read_json("tmp/config.json")
 logger.info("Loaded config: %s", loaded)
 ```
 
-If your TOML configuration is split across multiple files, `load_config()` merges it into one object:
+If your configuration is split across multiple TOML, JSON, or YAML files, `load_config()` merges it into one object:
 
 ```python
 from clevertools import load_config
 
-config = load_config("config/settings.toml", "config/content.toml")
+config = load_config("config/settings.toml", "config/content.yaml")
 print(config.pipelines.ai.enabled)
 ```
 
