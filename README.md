@@ -5,7 +5,7 @@
 ## What You Get
 
 - simple text and binary file helpers
-- JSON and TOML read/write helpers
+- JSON, TOML, and YAML read/write helpers
 - masking for tokens, secrets, IDs, and similar values
 - global configuration for shared error behavior
 - ready-to-use console and file logging
@@ -37,6 +37,8 @@ loaded = read_json("tmp/config.json")
 logger.info("Loaded config: %s", loaded)
 ```
 
+For split configuration setups, `load_config()` merges multiple TOML, JSON, or YAML files into one config object with dot access.
+
 ## Public API Overview
 
 ### Core
@@ -53,6 +55,9 @@ logger.info("Loaded config: %s", loaded)
 - `write_json`
 - `read_toml`
 - `write_toml`
+- `read_yaml`
+- `write_yaml`
+- `load_config`
 
 ### Logging helpers
 

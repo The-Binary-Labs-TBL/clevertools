@@ -16,6 +16,9 @@ Each public helper has its own page with signature, behavior, and examples.
 - [write_json](./write_json.md)
 - [read_toml](./read_toml.md)
 - [write_toml](./write_toml.md)
+- [read_yaml](./read_yaml.md)
+- [write_yaml](./write_yaml.md)
+- [load_config](./load_config.md)
 
 ## Logging helpers
 
