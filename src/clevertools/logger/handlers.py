@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import TextIO
 from pathlib import Path
 import logging
 
@@ -14,13 +15,17 @@ def reset_handlers(logger: logging.Logger) -> None:
         handler.close()
 
 
-def build_console_handler(options: ResolvedLoggerOptions) -> logging.Handler:
-    console_handler = logging.StreamHandler()
+def build_console_handler(
+    options: ResolvedLoggerOptions,
+    stream: TextIO | None = None,
+) -> logging.Handler:
+    console_handler = logging.StreamHandler(stream)
     console_handler.setFormatter(
         CleverToolsFormatter(
             options.fmt,
             datefmt=options.date_format,
             use_colors=options.use_colors,
+            color_stream=console_handler.stream,
         )
     )
     return console_handler

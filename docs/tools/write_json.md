@@ -1,6 +1,6 @@
 # `write_json`
 
-`write_json()` serializes a Python value to formatted JSON and writes it to disk.
+`write_json()` serializes Python data to formatted JSON and writes it to disk.
 
 ## Signature
 
@@ -15,7 +15,7 @@ write_json(
 ) -> None
 ```
 
-## Example
+## Example: standard JSON output
 
 ```python
 from clevertools import write_json
@@ -27,6 +27,17 @@ write_json(
         "enabled": True,
         "retries": 3,
     },
+)
+```
+
+## Example: pretty Unicode output
+
+```python
+from clevertools import write_json
+
+write_json(
+    "build/report.json",
+    {"title": "Überblick", "status": "fertig"},
     ensure_ascii=False,
     indent=2,
 )
@@ -36,4 +47,5 @@ write_json(
 
 - `data` must not be `None`.
 - With `create_if_missing=True`, parent folders are created automatically.
-- Serialization errors are handled through the shared error policy.
+- Non-serializable objects are rejected through the shared error policy.
+- `ensure_ascii=False` is helpful when you want readable Unicode output.

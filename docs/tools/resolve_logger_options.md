@@ -1,6 +1,6 @@
 # `resolve_logger_options`
 
-`resolve_logger_options()` merges explicit logger arguments with the defaults stored by `configure()`.
+`resolve_logger_options()` merges explicit logger arguments with any defaults stored by `configure()`. The result is a resolved options object used internally by `configure_logger()`.
 
 ## Signature
 
@@ -19,7 +19,7 @@ resolve_logger_options(
 ) -> ResolvedLoggerOptions
 ```
 
-## Example
+## Example: inspect the final logger settings
 
 ```python
 from clevertools import configure, resolve_logger_options
@@ -45,9 +45,11 @@ options = resolve_logger_options(
 
 print(options.level)
 print(options.format_preset)
+print(options.console_enabled)
 ```
 
 ## Notes
 
 - Explicit function arguments win over stored overrides.
-- If `fmt` is omitted, the formatter string comes from `format_preset`.
+- If `fmt` is omitted, the formatter string is derived from `format_preset`.
+- This helper is mainly useful when you want visibility into the exact logger settings before building handlers manually.

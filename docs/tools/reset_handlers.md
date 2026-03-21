@@ -8,6 +8,10 @@
 reset_handlers(logger: logging.Logger) -> None
 ```
 
+## When to use it
+
+Use this when you manage loggers manually and want a clean handler state before attaching new ones.
+
 ## Example
 
 ```python
@@ -19,5 +23,5 @@ reset_handlers(logger)
 
 ## Notes
 
-- `configure_logger()` already calls this internally before adding new handlers.
-- This is useful when you manage handlers yourself and want to avoid duplicates.
+- `configure_logger()` already calls this internally before attaching fresh handlers.
+- Closing handlers matters because file handlers may otherwise keep file descriptors open.

@@ -2,6 +2,50 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyd
+*.pyo
+*.py,cover
+
+# Python environments and local version files
+.env
+.env.*
+.venv/
+.python-version
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python packaging, builds, and installers
+build/
+dist/
+site/
+.eggs/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+share/python-wheels/
+wheelhouse/
+sdist/
+develop-eggs/
+downloads/
+parts/
+var/
+wheels/
+MANIFEST
+
+# Python tooling and dependency managers
+__pypackages__/
+poetry.toml
+.pdm.toml
+.pdm-build/
+.pdm-python
+dmypy.json
+.pyre/
+.pytype/
+.pybuilder/
+cython_debug/
 
 # Test, lint, and type-checker caches
 .pytest_cache/
@@ -14,30 +58,19 @@ __pycache__/
 .coverage.*
 htmlcov/
 coverage.xml
-
-# Build and packaging artifacts
-build/
-dist/
-.eggs/
-*.egg-info/
-*.egg
-pip-wheel-metadata/
-
-# Virtual environments
-.env
-.venv/
-env/
-venv/
-ENV/
-
-# Local tool configuration
-poetry.toml
-.pdm.toml
+nosetests.xml
+*.cover
+*.py.cover
+.cache/
 
 # Documentation builds
 docs/_build/
+_build/
 
-# Editors
+# Jupyter and notebooks
+.ipynb_checkpoints/
+
+# Editors and IDEs
 .vscode/
 .vscode/*
 !.vscode/settings.json
@@ -45,6 +78,40 @@ docs/_build/
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+.vscode-test/
 .idea/
+.fleet/
 .history/
 .ionide/
+*.code-workspace
+*.iml
+*.suo
+*.user
+*.userossc
+*.rsuser
+*.sln.docstates
+*.swp
+*.swo
+*~
+
+# OS and file manager artifacts
+.DS_Store
+.DS_Store?
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100/
+.Trashes/
+._*
+
+# Logs and runtime files
+*.log
+*.out
+*.err
+*.pid
+*.pid.lock
+
+# Local archives and temporary files
+*.tmp
+*.temp
+*.bak

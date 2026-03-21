@@ -1,6 +1,6 @@
 # `build_file_handler`
 
-`build_file_handler()` creates a file-based log handler with the configured formatter.
+`build_file_handler()` creates a file-based logging handler using the resolved options and `CleverToolsFormatter`.
 
 ## Signature
 
@@ -8,7 +8,7 @@
 build_file_handler(options: ResolvedLoggerOptions) -> logging.Handler
 ```
 
-## Example
+## Example: manual file handler setup
 
 ```python
 import logging
@@ -28,10 +28,13 @@ options = resolve_logger_options(
 )
 
 logger = logging.getLogger("manual-file")
+logger.setLevel(options.level)
 logger.addHandler(build_file_handler(options))
 ```
 
 ## Notes
 
 - Missing parent folders for the log file are created automatically.
-- `"runtime"` overwrites the log file and `"buffered"` appends to it.
+- `"runtime"` overwrites the file on each run.
+- `"buffered"` appends to the existing file.
+- If no file path is set, the default path becomes `clevertools.log`.

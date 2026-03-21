@@ -9,6 +9,7 @@ from ..models import (
     WriteMode,
 )
 from .handlers import build_console_handler, build_file_handler, reset_handlers
+from .runtime import flush_bootstrap_buffer, get_console_stream
 from .options import resolve_logger_options
 from .logger import get_logger
 
@@ -45,9 +46,11 @@ def configure_logger(
     reset_handlers(logger)
 
     if options.console_enabled:
-        logger.addHandler(build_console_handler(options))
+        logger.addHandler(build_console_handler(options, stream=get_console_stream(name)))
 
     if options.file_logging_enabled:
         logger.addHandler(build_file_handler(options))
+
+    flush_bootstrap_buffer(logger)
 
     return logger

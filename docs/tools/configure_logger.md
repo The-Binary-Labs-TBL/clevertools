@@ -1,6 +1,6 @@
 # `configure_logger`
 
-`configure_logger()` creates or reconfigures a logger with console and file handlers.
+`configure_logger()` is the main entry point for logging in `clevertools`. It creates or refreshes a logger with the selected console and file handlers.
 
 ## Signature
 
@@ -23,11 +23,13 @@ configure_logger(
 ## What it does
 
 - resolves final options from explicit arguments and `configure()`
-- resets existing handlers to avoid duplicate output
-- optionally adds a console handler
-- optionally adds a file handler
+- fetches the named logger
+- resets existing handlers to avoid duplicates
+- adds a console handler if enabled
+- adds a file handler if enabled
+- flushes any buffered startup records from `start_file_logger()`
 
-## Example
+## Example: normal application logger
 
 ```python
 from clevertools import configure_logger
@@ -46,7 +48,25 @@ logger = configure_logger(
 logger.info("worker ready")
 ```
 
+## Example: rely on stored defaults
+
+```python
+from clevertools import configure, configure_logger
+
+configure(
+    logger_overrides={
+        "level": "DEBUG",
+        "console_enabled": True,
+        "format_preset": "default",
+    }
+)
+
+logger = configure_logger(name="debug-run", use_colors=False)
+logger.debug("using stored logger defaults")
+```
+
 ## Notes
 
-- If `fmt` is set, it wins over `format_preset`.
-- `file_log_path` defaults to `clevertools.log` when file logging is enabled and no path is given.
+- If `fmt` is set, it overrides `format_preset`.
+- If file logging is enabled and no path is provided, the default file path becomes `clevertools.log`.
+- Reconfiguring the same logger replaces its handlers rather than stacking new ones on top.

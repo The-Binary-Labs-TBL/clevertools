@@ -1,6 +1,6 @@
 # `CleverToolsFormatter`
 
-`CleverToolsFormatter` is the custom formatter used by the built-in logger handlers.
+`CleverToolsFormatter` is the custom formatter used by the built-in logging handlers in `clevertools`.
 
 ## Signature
 
@@ -15,11 +15,11 @@ CleverToolsFormatter(
 
 ## Features
 
-- injects `%(date)s` and `%(time)s` fields into log records
-- can colorize `%(levelname)s` for TTY output
-- restores the original record values after formatting
+- injects `%(date)s` and `%(time)s` into each log record
+- can colorize `%(levelname)s` when output is written to a TTY
+- restores original record values after formatting so other handlers are not polluted
 
-## Example
+## Example: use the built-in structured fields
 
 ```python
 import logging
@@ -35,7 +35,23 @@ handler.setFormatter(
 )
 ```
 
+## Example: custom format
+
+```python
+import logging
+
+from clevertools import CleverToolsFormatter
+
+handler = logging.StreamHandler()
+handler.setFormatter(
+    CleverToolsFormatter(
+        "[%(date)s %(time)s] %(levelname)s %(message)s",
+        use_colors=False,
+    )
+)
+```
+
 ## Notes
 
-- `datefmt` only matters when your format string uses fields like `%(asctime)s`.
-- The built-in presets rely on `%(date)s` and `%(time)s`, which are generated internally.
+- `datefmt` only matters when your format string uses fields such as `%(asctime)s`.
+- The formatter's custom `%(date)s` and `%(time)s` fields always use the library's internal date and time formats.

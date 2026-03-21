@@ -1,17 +1,25 @@
 # Installation
 
-`clevertools` requires Python `>=3.10`.
+`clevertools` requires Python `>=3.11`.
 
-## Local setup
+## Fastest local install
+
+If you are already inside a suitable virtual environment, this is enough:
+
+```bash
+pip install -e .
+```
+
+## Full development setup
 
 ### Linux
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-pip install -e .
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install -e .
 ```
 
 ### macOS
@@ -43,3 +51,23 @@ py -m pip install --upgrade pip
 py -m pip install -r requirements.txt
 py -m pip install -e .
 ```
+
+## What gets installed
+
+- the `clevertools` package from `src/`
+- the dependencies listed in `requirements.txt`
+- an editable install so local source changes are available immediately
+
+## Verify the installation
+
+```bash
+python -c "import clevertools; print(clevertools.__all__[:5])"
+```
+
+## Next steps
+
+After installation, continue with:
+
+1. [Getting Started](./getting-started.md)
+2. [Quickstart](./quickstart.md)
+3. [Tools](./tools/README.md)

@@ -1,24 +1,25 @@
 from __future__ import annotations
 
+from .models import DEFAULT_LOGGER_NAME
 from .configuration import configure
-from .system.config_handler import load_config
 
 from .errors.exceptions import *  # noqa: F403
 
-from .logger.bootstrap import configure_logger
-from .logger.formatter import CleverToolsFormatter
 from .logger.handlers import build_console_handler, build_file_handler, reset_handlers
-from .logger.logger import get_logger
+from .logger.runtime import start_file_logger, stop_file_logger
+from .logger.formatter import CleverToolsFormatter
 from .logger.options import resolve_logger_options
+from .logger.bootstrap import configure_logger
+from .logger.logger import get_logger
 
-from .file.default_io import read, write
+from .system.path_utils import ensure_dir, ensure_file
+from .system.config_handler import load_config
+from .system.mask_handler import mask
+
 from .file.json_io import read_json, write_json
 from .file.toml_io import read_toml, write_toml
 from .file.yaml_io import read_yaml, write_yaml
-
-from .system.mask_handler import mask
-
-from .models import DEFAULT_LOGGER_NAME
+from .file.default_io import read, write
 
 log = configure_logger(name=DEFAULT_LOGGER_NAME)
 
@@ -28,6 +29,8 @@ __all__ = (
     "mask",
     "read",
     "write",
+    "ensure_file",
+    "ensure_dir",
     "read_json",
     "write_json",
     "read_toml",
@@ -35,6 +38,8 @@ __all__ = (
     "read_yaml",
     "write_yaml",
     "configure_logger",
+    "start_file_logger",
+    "stop_file_logger",
     "get_logger",
     "CleverToolsFormatter",
     "build_console_handler",

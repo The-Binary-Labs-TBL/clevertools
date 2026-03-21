@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+from clevertools import mask
+from typing import TypedDict
 import pytest
 
-from clevertools import mask
-
 from ._debug import debug
+
+class MaskVisibilityOptions(TypedDict, total=False):
+    show_start_characters: int
+    show_end_characters: int
 
 PASSWORD_CASES = (
     (
@@ -102,8 +106,22 @@ CUSTOM_MASK_CASES = (
 
 
 class MaskTestBase:
-    def _assert_mask(self, secret: str, expected: str, **kwargs: object) -> None:
-        masked = mask(secret, on_error="raise", **kwargs)
+    def _assert_mask(
+        self,
+        secret: str,
+        expected: str,
+        *,
+        show_start_characters: int | None = None,
+        show_end_characters: int | None = None,
+        mask_character: str = "*",
+    ) -> None:
+        masked = mask(
+            secret,
+            show_start_characters=show_start_characters,
+            show_end_characters=show_end_characters,
+            mask_character=mask_character,
+            on_error="raise",
+        )
         debug(f"Maskiere Wert: {secret}")
         debug(f"Maskiertes Ergebnis: {masked}")
         assert masked == expected
@@ -131,11 +149,16 @@ class TestMaskHandlerCustomVisibility(MaskTestBase):
         self,
         label: str,
         secret: str,
-        kwargs: dict[str, int],
+        kwargs: MaskVisibilityOptions,
         expected: str,
     ) -> None:
         debug(f"Pruefe benutzerdefiniertes Masking fuer {label}.")
-        self._assert_mask(secret, expected, **kwargs)
+        self._assert_mask(
+            secret,
+            expected,
+            show_start_characters=kwargs.get("show_start_characters"),
+            show_end_characters=kwargs.get("show_end_characters"),
+        )
 
 
 class TestMaskHandlerHardening(MaskTestBase):
