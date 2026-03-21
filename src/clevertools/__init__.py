@@ -1,11 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any
-
+from .models import DEFAULT_LOGGER_NAME
 from .configuration import configure
-from .models import DEFAULT_LOGGER_NAME, ErrorMode
-from .system.config_handler import load_config
 
 from .errors.exceptions import *  # noqa: F403
 
@@ -16,11 +12,14 @@ from .logger.options import resolve_logger_options
 from .logger.bootstrap import configure_logger
 from .logger.logger import get_logger
 
+from .system.path_utils import ensure_dir, ensure_file
+from .system.config_handler import load_config
+from .system.mask_handler import mask
+
 from .file.json_io import read_json, write_json
 from .file.toml_io import read_toml, write_toml
 from .file.yaml_io import read_yaml, write_yaml
 from .file.default_io import read, write
-from .system.mask_handler import mask
 
 log = configure_logger(name=DEFAULT_LOGGER_NAME)
 
@@ -30,6 +29,8 @@ __all__ = (
     "mask",
     "read",
     "write",
+    "ensure_file",
+    "ensure_dir",
     "read_json",
     "write_json",
     "read_toml",

@@ -9,6 +9,7 @@ If you know your goal already, start here:
 - I want package-wide defaults: [configure](./configure.md)
 - I want to hide a secret before logging it: [mask](./mask.md)
 - I want to read or write files: [read](./read.md), [write](./write.md)
+- I want to ensure files or directories exist: [ensure_file](./ensure_file.md), [ensure_dir](./ensure_dir.md)
 - I want JSON, TOML, or YAML helpers: [read_json](./read_json.md), [write_json](./write_json.md), [read_toml](./read_toml.md), [write_toml](./write_toml.md), [read_yaml](./read_yaml.md), [write_yaml](./write_yaml.md)
 - I want to merge config files: [load_config](./load_config.md)
 - I want a logger quickly: [configure_logger](./configure_logger.md)
@@ -30,6 +31,10 @@ If you know your goal already, start here:
   Reads plain text or raw bytes from a file.
 - [write](./write.md)
   Writes plain text or raw bytes to a file.
+- [ensure_file](./ensure_file.md)
+  Ensures that one file or several files exist and are valid file targets.
+- [ensure_dir](./ensure_dir.md)
+  Ensures that one directory or several directories exist and are valid directory targets.
 - [read_json](./read_json.md)
   Reads and parses JSON into Python objects.
 - [write_json](./write_json.md)

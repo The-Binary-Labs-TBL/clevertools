@@ -26,6 +26,7 @@ Use `clevertools` when you want:
 ### File helpers
 
 - `read()` and `write()` handle plain text and raw bytes
+- `ensure_file()` and `ensure_dir()` make sure file and directory paths exist
 - `read_json()` and `write_json()` handle JSON files
 - `read_toml()` and `write_toml()` handle TOML files
 - `read_yaml()` and `write_yaml()` handle YAML files
