@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Optional
 from pathlib import Path
-import yaml
+import yaml  # type: ignore[import-untyped]
 
 from ..errors.exceptions import YamlReadError, YamlWriteError
 from ..errors.policy import handle_error

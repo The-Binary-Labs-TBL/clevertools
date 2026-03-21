@@ -1,6 +1,6 @@
 # `build_console_handler`
 
-`build_console_handler()` creates a `logging.StreamHandler` with `CleverToolsFormatter`.
+`build_console_handler()` creates a configured `logging.StreamHandler` using `CleverToolsFormatter`.
 
 ## Signature
 
@@ -8,7 +8,11 @@
 build_console_handler(options: ResolvedLoggerOptions) -> logging.Handler
 ```
 
-## Example
+## When to use it
+
+Most users should prefer `configure_logger()`. Use `build_console_handler()` only when you want to assemble the logger manually.
+
+## Example: manual console handler setup
 
 ```python
 import logging
@@ -28,9 +32,11 @@ options = resolve_logger_options(
 )
 
 logger = logging.getLogger("manual-console")
+logger.setLevel(options.level)
 logger.addHandler(build_console_handler(options))
 ```
 
 ## Notes
 
-- Most users should call `configure_logger()` instead of building handlers manually.
+- The handler uses `CleverToolsFormatter` internally.
+- The optional stream is mainly used by the bootstrap logger path.

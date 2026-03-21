@@ -7,7 +7,6 @@ from pathlib import Path
 from ..errors.policy import handle_error
 from ..file.toml_io import read_toml
 from ..file.json_io import read_json
-from ..file.yaml_io import read_yaml
 from ..models import ErrorMode
 
 
@@ -111,7 +110,12 @@ class ConfigHandler(ConfigNode):
             elif suffix == ".json":
                 loaded = read_json(path, on_error=on_error)
             elif suffix in {".yaml", ".yml"}:
-                loaded = read_yaml(path, on_error=on_error)
+                try:
+                    from ..file.yaml_io import read_yaml
+                except ImportError as exc:
+                    loaded = handle_error(exc, on_error=on_error, fallback=None)
+                else:
+                    loaded = read_yaml(path, on_error=on_error)
             else:
                 loaded = handle_error(
                     ValueError("Invalid config handler type! Only .toml, .json and .yaml(.yml) file types are allowed"),

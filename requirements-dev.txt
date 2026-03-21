@@ -1,0 +1,13 @@
+-r requirements.txt
+Faker==40.11.0
+iniconfig==2.3.0
+librt==0.8.1
+mypy==1.19.1
+mypy_extensions==1.1.0
+packaging==26.0
+pathspec==1.0.4
+pluggy==1.6.0
+Pygments==2.19.2
+pytest==9.0.2
+ruff==0.15.7
+typing_extensions==4.15.0

@@ -1,6 +1,6 @@
 # `write_yaml`
 
-`write_yaml()` serializes a Python value to YAML and writes it to disk.
+`write_yaml()` serializes Python data to YAML and writes it to disk.
 
 ## Signature
 
@@ -15,7 +15,7 @@ write_yaml(
 ) -> None
 ```
 
-## Example
+## Example: write a readable YAML config
 
 ```python
 from clevertools import write_yaml
@@ -32,8 +32,20 @@ write_yaml(
 )
 ```
 
+## Example: preserve non-ASCII text
+
+```python
+from clevertools import write_yaml
+
+write_yaml(
+    "content/meta.yaml",
+    {"title": "Überblick", "language": "de"},
+    allow_unicode=True,
+)
+```
+
 ## Notes
 
 - `data` must not be `None`.
 - With `create_if_missing=True`, parent folders are created automatically.
-- Serialization errors are handled through the shared error policy.
+- `sort_keys=False` is useful when output order should stay close to your input structure.

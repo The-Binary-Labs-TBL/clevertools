@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+from clevertools import (
+    configure,
+    configure_logger,
+    log,
+    start_file_logger,
+    stop_file_logger
+)
+from pytest import CaptureFixture
+from pathlib import Path
+import sys
 import re
 
-from pytest import CaptureFixture
-
-from clevertools import configure, configure_logger, log
-
-from ..paths import PATHS
 
 DEFAULT_LOG_LINE = "clevertools | [{level}] = {message}"
 DATETIME_LOG_PATTERN = (
@@ -19,7 +24,7 @@ class LoggerTestBase:
     def _configure_file_logger(
         self,
         *,
-        log_path: str,
+        log_path: str | Path,
         level: str,
         format_preset: str = "default",
     ) -> None:
@@ -52,8 +57,8 @@ class LoggerTestBase:
 
 
 class TestLoggerFormatting(LoggerTestBase):
-    def test_logger_uses_default_format_from_config(self) -> None:
-        log_path = PATHS.CACHE_FOLDER / "clevertools-default.log"
+    def test_logger_uses_default_format_from_config(self, cache_dir: Path) -> None:
+        log_path = cache_dir / "clevertools-default.log"
 
         self._configure_file_logger(log_path=log_path, level="DEBUG")
 
@@ -68,8 +73,8 @@ class TestLoggerFormatting(LoggerTestBase):
             message="hello logger",
         )
 
-    def test_logger_uses_datetime_format_when_requested(self) -> None:
-        log_path = PATHS.CACHE_FOLDER / "clevertools-datetime.log"
+    def test_logger_uses_datetime_format_when_requested(self, cache_dir: Path) -> None:
+        log_path = cache_dir / "clevertools-datetime.log"
 
         self._configure_file_logger(
             log_path=log_path,
@@ -140,8 +145,8 @@ class TestLoggerHardening(LoggerTestBase):
             message="single console line",
         )
 
-    def test_logger_respects_custom_format_override_exactly(self) -> None:
-        log_path = PATHS.CACHE_FOLDER / "clevertools-custom-format.log"
+    def test_logger_respects_custom_format_override_exactly(self, cache_dir: Path) -> None:
+        log_path = cache_dir / "clevertools-custom-format.log"
 
         configure(
             logger_overrides={
@@ -158,3 +163,63 @@ class TestLoggerHardening(LoggerTestBase):
 
         assert log_path.exists()
         assert log_path.read_text(encoding="utf-8").strip() == "[WARNING] custom override"
+
+    def test_start_file_logger_buffers_early_records_until_final_configuration(self, cache_dir: Path) -> None:
+        log_path = cache_dir / "clevertools-bootstrapped.log"
+
+        configure(
+            logger_overrides={
+                "level": "INFO",
+                "console_enabled": False,
+                "file_logging_enabled": True,
+                "file_log_path": log_path,
+            }
+        )
+
+        try:
+            logger = start_file_logger()
+            logger.info("before configure")
+
+            configure_logger(use_colors=False)
+            logger.info("after configure")
+        finally:
+            stop_file_logger()
+
+        rendered_lines = log_path.read_text(encoding="utf-8").splitlines()
+
+        assert len(rendered_lines) == 2
+        self._assert_default_line(
+            rendered_lines[0],
+            level="INFO",
+            message="before configure",
+        )
+        self._assert_default_line(
+            rendered_lines[1],
+            level="INFO",
+            message="after configure",
+        )
+
+    def test_start_file_logger_can_capture_stdout_and_stderr(self, cache_dir: Path) -> None:
+        log_path = cache_dir / "clevertools-stdio.log"
+
+        configure(
+            logger_overrides={
+                "level": "INFO",
+                "console_enabled": False,
+                "file_logging_enabled": True,
+                "file_log_path": log_path,
+            }
+        )
+
+        try:
+            start_file_logger(capture_stdout=True, capture_stderr=True)
+            print("hello stdout")
+            sys.stderr.write("hello stderr\n")
+            configure_logger(use_colors=False)
+        finally:
+            stop_file_logger()
+
+        rendered = log_path.read_text(encoding="utf-8")
+
+        assert "hello stdout" in rendered
+        assert "hello stderr" in rendered

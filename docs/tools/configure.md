@@ -1,6 +1,6 @@
 # `configure`
 
-`configure()` updates the global `clevertools` defaults.
+`configure()` stores package-wide defaults for `clevertools`. It is the central place to define how helpers should behave when you do not want to pass the same options on every call.
 
 ## Signature
 
@@ -12,33 +12,45 @@ configure(
 )
 ```
 
-## What it changes
+## What it controls
 
-- `error_mode` sets the default behavior for helpers that support `on_error`.
-- `logger_overrides` stores default arguments that `configure_logger()` will use later.
+- `error_mode` becomes the default for helpers that support `on_error`
+- `logger_overrides` becomes the default option set that `configure_logger()` will reuse later
 
-## Returns
+## Return value
 
 Returns a copy of the active configuration snapshot.
 
-## Example
+## Example: set a strict default
 
 ```python
-from clevertools import configure
+from clevertools import configure, read_json
 
-config = configure(
-    error_mode="raise",
+configure(error_mode="raise")
+
+payload = read_json("config.json")
+```
+
+## Example: store logger defaults once
+
+```python
+from clevertools import configure, configure_logger
+
+configure(
     logger_overrides={
-        "level": "DEBUG",
-        "console_enabled": True,
+        "level": "INFO",
         "format_preset": "datetime",
-    },
+        "console_enabled": True,
+        "file_logging_enabled": True,
+        "file_log_path": "logs/app.log",
+    }
 )
 
-print(config.error_mode)
+logger = configure_logger(name="app", use_colors=False)
 ```
 
 ## Notes
 
 - Unsupported `error_mode` values raise `ValueError`.
-- A later call replaces the stored `logger_overrides` dictionary.
+- Passing `logger_overrides` replaces the stored override dictionary instead of merging into the previous one.
+- Explicit arguments passed directly to `configure_logger()` still win over stored overrides.

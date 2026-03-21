@@ -1,9 +1,2 @@
-# === Builds and Testing === #
-pytest
-ruff
-mypy
-faker
-
-# === For tools to work === #
-tomli_w
-pyyaml
+PyYAML==6.0.3
+tomli_w==1.2.0

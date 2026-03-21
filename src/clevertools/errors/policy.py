@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TypeVar
+from typing import TypeVar, overload
 import logging
 
 from ..configuration import ErrorMode, get_config
@@ -13,7 +13,15 @@ def _resolve_error_mode(on_error: ErrorMode | None = None) -> ErrorMode:
         return on_error
     return get_config().error_mode
 
-def handle_error(exc: Exception, *, on_error: ErrorMode | None = None, fallback: T = None) -> T:
+@overload
+def handle_error(exc: Exception, *, on_error: ErrorMode | None = None, fallback: T) -> T: ...
+
+
+@overload
+def handle_error(exc: Exception, *, on_error: ErrorMode | None = None, fallback: None = None) -> None: ...
+
+
+def handle_error(exc: Exception, *, on_error: ErrorMode | None = None, fallback: T | None = None) -> T | None:
     mode = _resolve_error_mode(on_error)
 
     if mode == "raise":
