@@ -33,7 +33,6 @@ class StreamToLogger(io.TextIOBase):
         self._buffer = ""
 
     def write(self, text: str) -> int:
-        self.original_stream.write(text)
         self._buffer += text
 
         while "\n" in self._buffer:
@@ -62,6 +61,8 @@ class BootstrapState:
     buffer_handler: InMemoryLogHandler
     stdout_original: TextIO | None = None
     stderr_original: TextIO | None = None
+    stdout_redirect: StreamToLogger | None = None
+    stderr_redirect: StreamToLogger | None = None
 
 
 _BOOTSTRAP_STATE: dict[str, BootstrapState] = {}
@@ -95,7 +96,8 @@ def start_file_logger(
             raise RuntimeError("sys.stdout is not available for capture.")
 
         state.stdout_original = stdout_stream
-        sys.stdout = StreamToLogger(logger, logging.INFO, stdout_stream)
+        state.stdout_redirect = StreamToLogger(logger, logging.INFO, stdout_stream)
+        sys.stdout = state.stdout_redirect
 
     if capture_stderr and state.stderr_original is None:
         stderr_stream = sys.stderr
@@ -103,7 +105,8 @@ def start_file_logger(
             raise RuntimeError("sys.stderr is not available for capture.")
 
         state.stderr_original = stderr_stream
-        sys.stderr = StreamToLogger(logger, logging.ERROR, stderr_stream)
+        state.stderr_redirect = StreamToLogger(logger, logging.ERROR, stderr_stream)
+        sys.stderr = state.stderr_redirect
 
     return logger
 
@@ -114,12 +117,18 @@ def stop_file_logger(name: str = DEFAULT_LOGGER_NAME) -> None:
         return
 
     if state.stdout_original is not None:
+        if state.stdout_redirect is not None:
+            state.stdout_redirect.flush()
         sys.stdout = state.stdout_original
         state.stdout_original = None
+        state.stdout_redirect = None
 
     if state.stderr_original is not None:
+        if state.stderr_redirect is not None:
+            state.stderr_redirect.flush()
         sys.stderr = state.stderr_original
         state.stderr_original = None
+        state.stderr_redirect = None
 
 
 def flush_bootstrap_buffer(logger: logging.Logger) -> None:

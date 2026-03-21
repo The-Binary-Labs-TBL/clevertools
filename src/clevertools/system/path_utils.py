@@ -8,7 +8,7 @@ from ..errors.policy import handle_error
 from ..file.default_io import write
 from ..models import ErrorMode
 
-def _normalize_paths(paths: Path | str | List[Path | str], on_error: Optional[ErrorMode]) -> List[Path] | None:
+def _normalize_paths(paths: Path | str | List[Path | str], on_error: Optional[ErrorMode] = None) -> List[Path] | None:
     """Normalize supported path inputs into a list of ``Path`` objects."""
 
     if isinstance(paths, (Path, str)):
@@ -26,7 +26,7 @@ def ensure_file(
     paths: Path | str | List[Path | str],
     default_content: str | bytes = "No default content was provided for the new file.",
     replace: bool = False,
-    on_error: Optional[ErrorMode] = "log",
+    on_error: Optional[ErrorMode] = None,
 ) -> None:
     """
     Ensure that one or more file paths exist and point to regular files.
@@ -60,7 +60,7 @@ def ensure_file(
 
         for item in items:
             if item.exists() and not item.is_file():
-                return handle_error(ValidationError("Expected a file path, but got a directory: {item}"), on_error=on_error, fallback=None)
+                return handle_error(ValidationError(f"Expected a file path, but got a directory: {item}"), on_error=on_error, fallback=None)
 
             item.parent.mkdir(parents=True, exist_ok=True)
 
@@ -76,7 +76,7 @@ def ensure_file(
         handle_error(exc, on_error=on_error, fallback=None)
 
 
-def ensure_dir(paths: Path | str | List[Path | str], on_error: Optional[ErrorMode] = "log") -> None:
+def ensure_dir(paths: Path | str | List[Path | str], on_error: Optional[ErrorMode] = None) -> None:
     """
     Ensure that one or more directory paths exist and point to directories.
 
@@ -102,7 +102,7 @@ def ensure_dir(paths: Path | str | List[Path | str], on_error: Optional[ErrorMod
 
         for item in items:
             if item.exists() and not item.is_dir():
-                return handle_error(ValidationError("Expected a directory path, but got a file: {item}"), on_error=on_error, fallback=None)
+                return handle_error(ValidationError(f"Expected a directory path, but got a file: {item}"), on_error=on_error, fallback=None)
             
             item.mkdir(parents=True, exist_ok=True)
     except OSError as exc:

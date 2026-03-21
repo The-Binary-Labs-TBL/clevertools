@@ -223,3 +223,36 @@ class TestLoggerHardening(LoggerTestBase):
 
         assert "hello stdout" in rendered
         assert "hello stderr" in rendered
+
+    def test_start_file_logger_does_not_duplicate_boot_output_on_console(
+        self,
+        cache_dir: Path,
+        capsys: CaptureFixture[str],
+    ) -> None:
+        log_path = cache_dir / "clevertools-console-bootstrap.log"
+
+        configure(
+            logger_overrides={
+                "level": "INFO",
+                "console_enabled": True,
+                "file_logging_enabled": True,
+                "file_log_path": log_path,
+            }
+        )
+
+        try:
+            start_file_logger(capture_stdout=True, capture_stderr=True)
+            print("hello stdout")
+            sys.stderr.write("hello stderr\n")
+            configure_logger(use_colors=False)
+        finally:
+            stop_file_logger()
+
+        captured = capsys.readouterr()
+        rendered_err = [line for line in captured.err.splitlines() if line]
+
+        assert captured.out == ""
+        assert rendered_err == [
+            DEFAULT_LOG_LINE.format(level="INFO", message="hello stdout"),
+            DEFAULT_LOG_LINE.format(level="ERROR", message="hello stderr"),
+        ]
