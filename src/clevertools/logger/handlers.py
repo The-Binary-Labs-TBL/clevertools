@@ -25,6 +25,7 @@ def build_console_handler(
             options.fmt,
             datefmt=options.date_format,
             use_colors=options.use_colors,
+            color_stream=console_handler.stream,
         )
     )
     return console_handler

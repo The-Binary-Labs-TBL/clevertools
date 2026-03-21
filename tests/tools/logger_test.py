@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from clevertools import (
+    CleverToolsFormatter,
     configure,
     configure_logger,
     log,
@@ -9,6 +10,8 @@ from clevertools import (
 )
 from pytest import CaptureFixture
 from pathlib import Path
+import io
+import logging
 import sys
 import re
 
@@ -54,6 +57,15 @@ class LoggerTestBase:
     def _assert_datetime_line(self, rendered_line: str, *, level: str, message: str) -> None:
         pattern = DATETIME_LOG_PATTERN.format(level=level, message=re.escape(message))
         assert re.fullmatch(pattern, rendered_line)
+
+
+class _TTYStream(io.StringIO):
+    def __init__(self, *, isatty: bool) -> None:
+        super().__init__()
+        self._isatty = isatty
+
+    def isatty(self) -> bool:
+        return self._isatty
 
 
 class TestLoggerFormatting(LoggerTestBase):
@@ -121,6 +133,44 @@ class TestLoggerFormatting(LoggerTestBase):
             level="INFO",
             message="hello console datetime",
         )
+
+    def test_logger_uses_custom_date_format_for_datetime_preset(self, cache_dir: Path) -> None:
+        log_path = cache_dir / "clevertools-custom-date.log"
+
+        self._configure_file_logger(
+            log_path=log_path,
+            level="INFO",
+            format_preset="datetime",
+        )
+
+        logger = configure_logger(date_format="%d.%m.%Y", use_colors=False)
+        logger.info("hello custom date")
+
+        rendered_line = log_path.read_text(encoding="utf-8").strip()
+        assert re.fullmatch(
+            r"clevertools \| INFO \| \[\d{2}\.\d{2}\.\d{4}\] \[\d{2}:\d{2}:\d{2}\] = hello custom date",
+            rendered_line,
+        )
+
+    def test_formatter_uses_handler_stream_for_color_detection(self) -> None:
+        formatter = CleverToolsFormatter(
+            "[%(levelname)s] %(message)s",
+            use_colors=True,
+            color_stream=_TTYStream(isatty=True),
+        )
+        record = logging.LogRecord(
+            name="clevertools",
+            level=logging.WARNING,
+            pathname=__file__,
+            lineno=1,
+            msg="colored output",
+            args=(),
+            exc_info=None,
+        )
+
+        rendered = formatter.format(record)
+
+        assert "\033[33mWARNING\033[0m" in rendered
 
 
 class TestLoggerHardening(LoggerTestBase):

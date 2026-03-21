@@ -1,15 +1,23 @@
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, TextIO
 import logging
-import sys
 
 from ..models import DEFAULT_COLORS, DEFAULT_DATE_FORMAT, DEFAULT_TIME_FORMAT, RESET
 
+
 class CleverToolsFormatter(logging.Formatter):
-    def __init__(self, fmt: str, datefmt: str | None = None, *, use_colors: bool = False) -> None:
+    def __init__(
+        self,
+        fmt: str,
+        datefmt: str | None = None,
+        *,
+        use_colors: bool = False,
+        color_stream: TextIO | None = None,
+    ) -> None:
         super().__init__(fmt=fmt, datefmt=datefmt)
         self.use_colors = use_colors
+        self.color_stream = color_stream
 
     def format(self, record: logging.LogRecord) -> str:
         original_values = self._remember_record_state(record)
@@ -30,11 +38,15 @@ class CleverToolsFormatter(logging.Formatter):
         }
 
     def _set_structured_timestamp_fields(self, record: logging.LogRecord) -> None:
-        record.date = self.formatTime(record, DEFAULT_DATE_FORMAT)
+        record.date = self.formatTime(record, self.datefmt or DEFAULT_DATE_FORMAT)
         record.time = self.formatTime(record, DEFAULT_TIME_FORMAT)
 
     def _set_colored_level_name(self, record: logging.LogRecord) -> None:
-        if not self.use_colors or not sys.stdout.isatty():
+        if not self.use_colors:
+            return
+
+        stream = self.color_stream
+        if stream is None or not stream.isatty():
             return
 
         color = DEFAULT_COLORS.get(record.levelname)
