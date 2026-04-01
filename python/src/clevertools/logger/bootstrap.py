@@ -51,6 +51,6 @@ def configure_logger(
     if options.file_logging_enabled:
         logger.addHandler(build_file_handler(options))
 
-    flush_bootstrap_buffer(logger)
+    flush_bootstrap_buffer(logger, file_write_mode=options.file_write_mode)
 
     return logger

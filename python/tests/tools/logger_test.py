@@ -249,6 +249,61 @@ class TestLoggerHardening(LoggerTestBase):
             message="after configure",
         )
 
+    def test_start_file_logger_writes_to_file_before_final_configuration(self, cache_dir: Path) -> None:
+        log_path = cache_dir / "clevertools-bootstrap-live.log"
+
+        configure(
+            logger_overrides={
+                "level": "INFO",
+                "console_enabled": False,
+                "file_logging_enabled": True,
+                "file_log_path": log_path,
+            }
+        )
+
+        try:
+            logger = start_file_logger()
+            logger.info("before crash")
+        finally:
+            stop_file_logger()
+
+        rendered_lines = log_path.read_text(encoding="utf-8").splitlines()
+
+        assert rendered_lines == [
+            DEFAULT_LOG_LINE.format(level="INFO", message="before crash"),
+        ]
+
+    def test_start_file_logger_does_not_duplicate_bootstrap_lines_in_buffered_mode(
+        self,
+        cache_dir: Path,
+    ) -> None:
+        log_path = cache_dir / "clevertools-bootstrap-buffered.log"
+
+        configure(
+            logger_overrides={
+                "level": "INFO",
+                "console_enabled": False,
+                "file_logging_enabled": True,
+                "file_log_path": log_path,
+            }
+        )
+
+        try:
+            logger = start_file_logger()
+            logger.info("before configure")
+
+            configure_logger(use_colors=False, file_write_mode="buffered")
+            logger.info("after configure")
+        finally:
+            stop_file_logger()
+
+        rendered_lines = log_path.read_text(encoding="utf-8").splitlines()
+
+        assert rendered_lines == [
+            DEFAULT_LOG_LINE.format(level="INFO", message="before configure"),
+            DEFAULT_LOG_LINE.format(level="INFO", message="after configure"),
+        ]
+
     def test_start_file_logger_can_capture_stdout_and_stderr(self, cache_dir: Path) -> None:
         log_path = cache_dir / "clevertools-stdio.log"
 

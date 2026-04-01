@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TextIO
 import logging
 import io
 import sys
 
-from ..models import DEFAULT_LOGGER_NAME
-from .handlers import reset_handlers
+from ..models import DEFAULT_LOGGER_NAME, WriteMode
+from .handlers import build_file_handler, reset_handlers
 from .logger import get_logger
+from .options import ResolvedLoggerOptions, resolve_logger_options
 
 
 class InMemoryLogHandler(logging.Handler):
@@ -59,6 +61,8 @@ class StreamToLogger(io.TextIOBase):
 @dataclass
 class BootstrapState:
     buffer_handler: InMemoryLogHandler
+    bootstrap_file_handler: logging.Handler | None = None
+    bootstrap_file_path: Path | None = None
     stdout_original: TextIO | None = None
     stderr_original: TextIO | None = None
     stdout_redirect: StreamToLogger | None = None
@@ -89,6 +93,8 @@ def start_file_logger(
         # Re-enter bootstrap mode cleanly after a previous final configuration.
         reset_handlers(logger)
         logger.addHandler(state.buffer_handler)
+
+    _ensure_bootstrap_file_handler(state, logger=logger, level=level)
 
     if capture_stdout and state.stdout_original is None:
         stdout_stream = sys.stdout
@@ -131,16 +137,42 @@ def stop_file_logger(name: str = DEFAULT_LOGGER_NAME) -> None:
         state.stderr_redirect = None
 
 
-def flush_bootstrap_buffer(logger: logging.Logger) -> None:
+def flush_bootstrap_buffer(
+    logger: logging.Logger,
+    *,
+    file_write_mode: WriteMode = "runtime",
+) -> None:
     state = _BOOTSTRAP_STATE.get(logger.name)
     if state is None:
         return
+
+    bootstrap_file_handler = state.bootstrap_file_handler
+    bootstrap_file_path = state.bootstrap_file_path
+    final_file_handler = _find_file_handler(logger)
+
+    replay_into_file = True
+    if (
+        file_write_mode == "buffered"
+        and
+        bootstrap_file_handler is not None
+        and bootstrap_file_path is not None
+        and final_file_handler is not None
+        and _same_file_target(final_file_handler, bootstrap_file_path)
+    ):
+        replay_into_file = False
 
     for record in state.buffer_handler.drain():
         for handler in logger.handlers:
             if handler is state.buffer_handler:
                 continue
+            if not replay_into_file and handler is final_file_handler:
+                continue
             handler.handle(record)
+
+    if bootstrap_file_handler is not None:
+        bootstrap_file_handler.close()
+        state.bootstrap_file_handler = None
+        state.bootstrap_file_path = None
 
 
 def get_console_stream(name: str = DEFAULT_LOGGER_NAME) -> TextIO | None:
@@ -152,3 +184,65 @@ def get_console_stream(name: str = DEFAULT_LOGGER_NAME) -> TextIO | None:
         return state.stderr_original
 
     return None
+
+
+def _ensure_bootstrap_file_handler(
+    state: BootstrapState,
+    *,
+    logger: logging.Logger,
+    level: int | str,
+) -> None:
+    options = resolve_logger_options(
+        level=level,
+        format_preset=None,
+        fmt=None,
+        date_format=None,
+        console_enabled=None,
+        file_logging_enabled=None,
+        file_log_path=None,
+        file_write_mode="buffered",
+        use_colors=False,
+    )
+
+    if not options.file_logging_enabled or options.file_log_path is None:
+        return
+
+    file_path = Path(options.file_log_path)
+
+    if state.bootstrap_file_path == file_path and state.bootstrap_file_handler in logger.handlers:
+        return
+
+    if state.bootstrap_file_handler is not None:
+        logger.removeHandler(state.bootstrap_file_handler)
+        state.bootstrap_file_handler.close()
+
+    bootstrap_file_handler = build_file_handler(_as_bootstrap_file_options(options))
+    logger.addHandler(bootstrap_file_handler)
+    state.bootstrap_file_handler = bootstrap_file_handler
+    state.bootstrap_file_path = file_path
+
+
+def _as_bootstrap_file_options(options: ResolvedLoggerOptions) -> ResolvedLoggerOptions:
+    return ResolvedLoggerOptions(
+        level=options.level,
+        format_preset=options.format_preset,
+        fmt=options.fmt,
+        date_format=options.date_format,
+        console_enabled=False,
+        file_logging_enabled=True,
+        file_log_path=options.file_log_path,
+        file_write_mode="buffered",
+        use_colors=False,
+    )
+
+
+def _find_file_handler(logger: logging.Logger) -> logging.FileHandler | None:
+    for handler in logger.handlers:
+        if isinstance(handler, logging.FileHandler):
+            return handler
+
+    return None
+
+
+def _same_file_target(handler: logging.FileHandler, expected_path: Path) -> bool:
+    return Path(handler.baseFilename) == expected_path.resolve()

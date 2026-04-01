@@ -1,117 +1,425 @@
-# Python bytecode and caches
-__pycache__/
-*.py[cod]
-*$py.class
-*.pyd
-*.pyo
-*.py,cover
+# ============================================================
+# Global / repository-wide ignore rules
+# ============================================================
+# Goal:
+# - cover the vast majority of local-only, generated, cached and
+#   machine-specific files
+# - stay readable and maintainable
+# - support Python, Rust, editors, build tooling and common CI/dev flows
+#
+# Notes:
+# - Rules here do NOT remove already tracked files from git history.
+# - Keep lockfiles only if your workflow requires them versioned.
+# - If a specific generated file should be committed, add an explicit `!path`.
 
-# Python environments and local version files
+
+# ============================================================
+# OS / filesystem noise
+# ============================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+Icon?
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+ehthumbs.db
+*.lnk
+
+
+# ============================================================
+# Temporary files, backups, swap files
+# ============================================================
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.swp
+*.swo
+*.swn
+*.seed
+*.pid
+*.pid.lock
+*.stackdump
+*~
+
+
+# ============================================================
+# Logs, dumps, traces
+# ============================================================
+*.log
+*.log.*
+logs/
+log/
+*.out
+*.err
+*.trace
+*.dmp
+*.dump
+*.core
+core
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# ============================================================
+# Secrets, local env files, machine-local overrides
+# ============================================================
 .env
 .env.*
-.venv/
-.python-version
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+.envrc
+.direnv/
+*.local
+*.secret
+*.secrets
+*.credentials
 
-# Python packaging, builds, and installers
-build/
-dist/
-site/
-.eggs/
-*.egg-info/
-*.egg
-pip-wheel-metadata/
-share/python-wheels/
-wheelhouse/
-sdist/
-develop-eggs/
-downloads/
-parts/
-var/
-wheels/
-MANIFEST
+# Common examples that are usually safe to keep
+!.env.example
+!.env.sample
+!.env.template
 
-# Python tooling and dependency managers
-__pypackages__/
-poetry.toml
-.pdm.toml
-.pdm-build/
-.pdm-python
-dmypy.json
-.pyre/
-.pytype/
-.pybuilder/
-cython_debug/
 
-# Test, lint, and type-checker caches
-.pytest_cache/
-.ruff_cache/
-.mypy_cache/
-.hypothesis/
-.tox/
-.nox/
-.coverage
-.coverage.*
-htmlcov/
-coverage.xml
-nosetests.xml
-*.cover
-*.py.cover
-.cache/
+# ============================================================
+# Git artifacts, patches, merge leftovers
+# ============================================================
+# `.git/` itself is intentionally NOT listed here.
+# In a normal repository it would not be useful to ignore it.
+*.patch
+*.diff
+*.orig
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+*.BACKUP.*
+*.BASE
+*.LOCAL
+*.REMOTE
+*.BACKUP
 
-# Documentation builds
-docs/_build/
-_build/
+# Local Git helper files occasionally created by tooling/scripts
+.gitmodules.local
+.gitconfig.local
+.git-credentials
+.git-credential-cache/
+.git-assume-unchanged
+.git-skip-worktree
 
-# Jupyter and notebooks
-.ipynb_checkpoints/
 
-# Editors and IDEs
-.vscode/
+# ============================================================
+# Editors / IDEs
+# ============================================================
+.idea/
+.fleet/
+.vs/
+.project
+.classpath
+.settings/
+.metadata/
+*.iml
+*.ipr
+*.iws
+*.suo
+*.user
+*.userossc
+*.rsuser
+*.sln.docstates
+*.code-workspace
+*.tmproj
+Session.vim
+
+# VS Code
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
-.vscode-test/
-.idea/
-.fleet/
+
+# Local editor history / helper state
 .history/
 .ionide/
-*.code-workspace
-*.iml
-*.suo
-*.user
-*.userossc
-*.rsuser
-*.sln.docstates
-*.swp
-*.swo
-*~
+.vscode-test/
+.nova/
+.zed/
+.cursor/
+.codeium/
+.windsurf/
+.idea_modules/
 
-# OS and file manager artifacts
-.DS_Store
-.DS_Store?
-Thumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-.Spotlight-V100/
-.Trashes/
-._*
 
-# Logs and runtime files
-*.log
-*.out
-*.err
-*.pid
-*.pid.lock
+# ============================================================
+# Generic caches and tool state
+# ============================================================
+.cache/
+.eslintcache
+.stylelintcache
+.sass-cache/
+.parcel-cache/
+.tmp/
+tmp/
+temp/
+.DSC_Store
 
-# Local archives and temporary files
-*.tmp
-*.temp
-*.bak
+
+# ============================================================
+# Archives / packaged artifacts
+# ============================================================
+*.7z
+*.bz2
+*.gz
+*.rar
+*.tar
+*.tgz
+*.xz
+*.zip
+
+
+# ============================================================
+# Generic binaries / compiled artifacts
+# ============================================================
+*.a
+*.dll
+*.dylib
+*.exe
+*.jar
+*.lib
+*.nar
+*.obj
+*.o
+*.pdb
+*.so
+*.war
+*.class
+
+
+# ============================================================
+# Generic build / release directories
+# ============================================================
+build/
+dist/
+out/
+release/
+debug/
+target/
+bin/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+site/
+public/build/
+
+
+# ============================================================
+# Python
+# ============================================================
+# Bytecode / interpreter caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.py,cover
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+python/.venv/
+python/venv/
+python/env/
+
+# Packaging / distribution
+.Python
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg
+*.egg-info/
+.installed.cfg
+MANIFEST
+
+# Test / coverage / QA
+.coverage
+.coverage.*
+coverage/
+coverage.xml
+htmlcov/
+.pytest_cache/
+.hypothesis/
+.tox/
+.nox/
+nosetests.xml
+pytestdebug.log
+cover/
+
+# Static analysis / type checking / formatting
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+.pyright/
+
+# Jupyter / notebooks / REPLs
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# Python tooling
+.pdm-build/
+.pdm-python/
+.pdm.toml
+__pypackages__/
+.pybuilder/
+cython_debug/
+.benchmarks/
+
+# PyInstaller / compiled app descriptors
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Framework / app-local defaults
+instance/
+.webassets-cache
+.scrapy/
+db.sqlite3
+db.sqlite3-journal
+local_settings.py
+
+# Documentation generators
+docs/_build/
+
+# Python version managers
+.python-version
+
+# Keep dependency lock files versioned only if desired
+# Pipfile.lock
+# poetry.lock
+# pdm.lock
+
+
+# ============================================================
+# Rust
+# ============================================================
+# Cargo build output
+/target/
+**/target/
+
+# Cargo / rustc metadata
+Cargo.lock
+**/*.rs.bk
+rust-project.json
+
+# Rust test / benchmark leftovers
+*.profraw
+*.profdata
+
+
+# ============================================================
+# JavaScript / TypeScript / frontend tooling
+# Included because many mixed Python/Rust repos still use frontend/dev tooling
+# ============================================================
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+.turbo/
+.next/
+.nuxt/
+.svelte-kit/
+storybook-static/
+vite.svg
+*.tsbuildinfo
+
+
+# ============================================================
+# Documentation / site generators
+# ============================================================
+.mkdocs_build/
+.docusaurus/
+
+
+# ============================================================
+# Infrastructure / cloud / containers
+# ============================================================
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+.serverless/
+.aws-sam/
+.pulumi/
+
+
+# ============================================================
+# Databases / local data / runtime artifacts
+# ============================================================
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+
+
+# ============================================================
+# Test runners / profiling / benchmarking
+# ============================================================
+.coverage-data/
+.pytest_cache/
+.benchmarks/
+prof/
+profile/
+
+
+# ============================================================
+# Language / build system extras
+# ============================================================
+# C / C++ / CMake / Autotools
+CMakeCache.txt
+CMakeFiles/
+cmake-build-*/
+compile_commands.json
+Makefile.in
+aclocal.m4
+autom4te.cache/
+m4/
+
+# Java / Gradle
+.gradle/
+
+# Go
+coverage.out
+
+
+# ============================================================
+# Project-specific room for exceptions
+# ============================================================
+# Add explicit allow rules below when generated files must stay tracked.
+# Example:
+# !python/.vscode/settings.json
+
+.codex
+.git/
+.logs/
+.log/

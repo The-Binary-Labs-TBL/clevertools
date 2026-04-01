@@ -28,7 +28,6 @@ def _deep_merge(base: dict[str, Any], incoming: Mapping[str, Any]) -> dict[str, 
 
 
 class ConfigNode:
-
     def __init__(self, data: Mapping[str, Any]) -> None:
         self._data = dict(data)
 

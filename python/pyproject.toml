@@ -4,19 +4,18 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clevertools"
-version = "1.4.1"
+version = "1.4.2"
 description = "Compact Python utility library for file I/O, config loading, sensitive-value masking, and ready-to-use logging."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE", "CONTRIBUTORS"]
 authors = [{ name = "b7binw13" }]
-keywords = ["utilities", "logging", "config", "json", "toml", "yaml", "masking", "b7binw13", "tbl", "the-binary-labs(tbl)"]
+keywords = ["utilities", "logging", "config", "file_handling", "json", "toml", "yaml", "masking", "b7binw13", "tbl", "the-binary-labs(tbl)"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
